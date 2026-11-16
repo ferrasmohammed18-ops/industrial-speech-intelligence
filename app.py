@@ -1,4 +1,3 @@
-
 import streamlit as st
 import tempfile
 from pathlib import Path
@@ -65,39 +64,37 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-st.caption(
-    "Plateforme d'analyse et de génération de rapports de maintenance"
-)
+st.caption("AI-powered analysis and maintenance report generation")
 
 st.divider()
 
 
 # --------------------------------------------------
-# IMPORT AUDIO
+# AUDIO UPLOAD
 # --------------------------------------------------
 
-st.subheader("1. Importer un enregistrement")
+st.subheader("1. Audio Upload")
 
 st.write(
-    "Importez un enregistrement audio pour obtenir "
-    "une transcription et un compte rendu de maintenance."
+    "Upload an audio recording to generate "
+    "a transcription and a structured maintenance report."
 )
 
 audio_file = st.file_uploader(
-    "Sélectionnez un fichier audio",
+    "Select an audio file",
     type=["wav", "mp3", "m4a"],
 )
 
 
 # --------------------------------------------------
-# ANALYSE AUDIO
+# AUDIO ANALYSIS
 # --------------------------------------------------
 
 if audio_file is not None:
 
     st.audio(audio_file)
 
-    if st.button("Analyser l'enregistrement", type="primary"):
+    if st.button("Analyze Recording", type="primary"):
 
         suffix = Path(audio_file.name).suffix
 
@@ -110,21 +107,21 @@ if audio_file is not None:
             temp_path = temp_file.name
 
         try:
-            with st.spinner("Analyse en cours..."):
+            with st.spinner("Processing audio..."):
                 results = run_pipeline(temp_path)
 
             st.session_state["results"] = results
-            st.success("Analyse terminée avec succès !")
+            st.success("Analysis completed successfully!")
 
         except Exception as error:
-            st.error(f"Une erreur est survenue : {error}")
+            st.error(f"An error occurred: {error}")
 
         finally:
             Path(temp_path).unlink(missing_ok=True)
 
 
 # --------------------------------------------------
-# RÉSULTATS
+# RESULTS
 # --------------------------------------------------
 
 if "results" in st.session_state:
@@ -132,56 +129,56 @@ if "results" in st.session_state:
     results = st.session_state["results"]
 
     st.divider()
-    st.subheader("2. Résultats de l'analyse")
+    st.subheader("2. Analysis Results")
 
-    # Indicateurs
+    # Processing indicators
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
-        st.metric("Audio", "Chargé", "✓")
+        st.metric("Audio", "Uploaded", "✓")
 
     with col2:
-        st.metric("Transcription", "Terminée", "✓")
+        st.metric("Transcription", "Completed", "✓")
 
     with col3:
-        st.metric("Recherche RAG", "Terminée", "✓")
+        st.metric("RAG Retrieval", "Completed", "✓")
 
     with col4:
-        st.metric("Rapport", "Généré", "✓")
+        st.metric("Report", "Generated", "✓")
 
-    # Transcription
-    with st.expander("Voir la transcription Whisper"):
+    # Speech transcription
+    with st.expander("View Whisper Transcription"):
         st.write(results["transcript"])
 
-    # Informations extraites
-    with st.expander("Voir les informations extraites", expanded=True):
+    # Extracted information
+    with st.expander("View Extracted Information", expanded=True):
 
         data = results["extracted_data"]
 
         col1, col2 = st.columns(2)
 
         with col1:
-            st.markdown("**Équipement**")
-            st.info(data.get("equipment") or "Non renseigné")
+            st.markdown("**Equipment**")
+            st.info(data.get("equipment") or "Not specified")
 
-            st.markdown("**Type d'équipement**")
-            st.info(data.get("equipment_type") or "Non renseigné")
+            st.markdown("**Equipment Type**")
+            st.info(data.get("equipment_type") or "Not specified")
 
-            st.markdown("**Problème signalé**")
-            st.info(data.get("problem") or "Non renseigné")
+            st.markdown("**Reported Problem**")
+            st.info(data.get("problem") or "Not specified")
 
-            st.markdown("**Priorité**")
-            st.info(data.get("priority") or "Non renseignée")
+            st.markdown("**Priority**")
+            st.info(data.get("priority") or "Not specified")
 
         with col2:
-            st.markdown("**Symptômes**")
+            st.markdown("**Symptoms**")
             symptoms = data.get("symptoms") or []
 
             if symptoms:
                 for item in symptoms:
                     st.markdown(f"- {item}")
             else:
-                st.write("Aucun symptôme renseigné")
+                st.write("No symptoms reported")
 
             st.markdown("**Observations**")
             observations = data.get("observations") or []
@@ -190,70 +187,70 @@ if "results" in st.session_state:
                 for item in observations:
                     st.markdown(f"- {item}")
             else:
-                st.write("Aucune observation renseignée")
+                st.write("No observations reported")
 
-            st.markdown("**Actions réalisées**")
+            st.markdown("**Actions Performed**")
             actions = data.get("actions_performed") or []
 
             if actions:
                 for item in actions:
                     st.markdown(f"- {item}")
             else:
-                st.write("Aucune action renseignée")
+                st.write("No actions reported")
 
-        st.markdown("**Informations manquantes**")
+        st.markdown("**Missing Information**")
         missing = data.get("missing_information") or []
 
         if missing:
             for item in missing:
                 st.markdown(f"- {item}")
         else:
-            st.success("Aucune information manquante signalée")
+            st.success("No missing information reported")
 
-    # Sources documentaires
-    with st.expander("Voir les sources documentaires"):
+    # Retrieved technical references
+    with st.expander("View Retrieved Technical References"):
 
         for document in results["retrieved_documents"]:
 
             st.markdown(
-                f"**Source :** {document['source']}  \n"
-                f"**Page :** {document['page']}  \n"
-                f"**Similarité :** {document['similarity']:.3f}"
+                f"**Source:** {document['source']}  \n"
+                f"**Page:** {document['page']}  \n"
+                f"**Similarity Score:** {document['similarity']:.3f}"
             )
 
             st.write(document["text"])
             st.divider()
 
-    # Compte rendu final
+    # Generated maintenance report
     st.divider()
-    st.subheader("3. Compte rendu de maintenance")
+    st.subheader("3. Generated Maintenance Report")
 
     report = results["report"]
 
     with st.container(border=True):
         st.markdown(report)
 
-    # Téléchargement TXT
+    # TXT download
     st.download_button(
-        label="📄 Télécharger le compte rendu (.txt)",
+        label="📄 Download Report (.txt)",
         data=report,
-        file_name="compte_rendu_maintenance.txt",
+        file_name="maintenance_report.txt",
         mime="text/plain",
         type="primary",
     )
 
-    # Téléchargement PDF
+    # PDF download
     pdf_file = generate_pdf(report)
 
     st.download_button(
-        label="📕 Télécharger le compte rendu (.pdf)",
+        label="📕 Download Report (.pdf)",
         data=pdf_file,
-        file_name="compte_rendu_maintenance.pdf",
+        file_name="maintenance_report.pdf",
         mime="application/pdf",
     )
 
 else:
     st.info(
-        "👋 Bienvenue ! Importez un fichier audio ci-dessus "
-        "pour commencer l'analyse de votre intervention."
+        "👋 Welcome! Upload an audio file above "
+        "to start analyzing your maintenance intervention."
     )
