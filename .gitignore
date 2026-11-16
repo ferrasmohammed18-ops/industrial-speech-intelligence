@@ -1,0 +1,40 @@
+
+# Virtual environments
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Temporary files and logs
+*.log
+.DS_Store
+
+# Sensitive environment variables
+.env
+.env.*
+
+# Generated synthetic data
+data/synthetic/audio/
+data/synthetic/transcripts/
+data/synthetic/annotations/
+data/synthetic/embeddings/
+data/synthetic/chunks.json
+data/synthetic/transcripts_whisper/
+
+# Downloaded models
+models/
+*.bin
+*.pt
+*.pth
+
+# Development tools
+.vscode/
+.idea/
+.pytest_cache/
+.ruff_cache/
+
+# Technical manuals (not included in the public repository)
+data/documents/manuals/

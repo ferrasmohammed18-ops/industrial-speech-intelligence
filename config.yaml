@@ -1,0 +1,20 @@
+
+project:
+  name: industrial-speech-intelligence
+  version: "0.1.0"
+
+data:
+  synthetic_dir: data/synthetic
+  audio_dir: data/synthetic/audio
+  transcripts_dir: data/synthetic/transcripts
+  annotations_dir: data/synthetic/annotations
+  manuals_dir: data/documents/manuals
+
+speech_to_text:
+  model: small
+  language: fr
+
+rag:
+  chunk_size: 500
+  chunk_overlap: 100
+  top_k: 3
